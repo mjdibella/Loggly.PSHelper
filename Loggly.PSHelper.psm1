@@ -75,7 +75,8 @@ function Get-LogglyEventPage {
         [Parameter(Mandatory=$false)][string]$from,
         [Parameter(Mandatory=$false)][string]$until,
         [Parameter(Mandatory=$false)][string]$order,
-        [Parameter(Mandatory=$false)][string]$size
+        [Parameter(Mandatory=$false)][string]$size,
+        [Parameter(Mandatory=$false)][int]$pages
     )
     <#
     $ curl -H 'Authorization: bearer <token>' -XGET 'https://<subdomain>.loggly.com/apiv2/events/iterate?q=*&from=-10m&until=now&size=2' 
@@ -102,6 +103,10 @@ function Get-LogglyEventPage {
             $response = ConvertFrom-JSON $webresponse.Content
             $response.events
             $uri = $response.next
+            $pagesReceived++
+            if (($pages -gt 0) -and ($pagesReceived -ge $pages)) {
+                break
+            }
         } catch {
             Set-LogglyRESTErrorResponse
         }

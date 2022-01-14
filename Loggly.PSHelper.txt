@@ -24,3 +24,4 @@ Get-LogglyEventPage: retrieves events in pages; required to retreive more than 5
 	-until optional, end time for the search; defaults to "now"
 	-order optional, direction of results returned, either "asc" or "desc"; defaults to "desc"
 	-size optional, events returned on each page; defaults to 50; maximum size is 1000
+	-pages optional, number of pages to return; defaults to unlimited
