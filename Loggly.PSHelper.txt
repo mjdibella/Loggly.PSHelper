@@ -19,9 +19,23 @@ Get-LogglyEvent: block retrieves up to 5000 events either by RSID or query
 	-size optional, number of events to retrieve, defaults to 50
 
 Get-LogglyEventPage: retrieves events in pages; required to retreive more than 5000 events
-	-query optional, defaults to all events
+	-query mandatory, defaults to all events
 	-from optional, start time for the search; defaults to "-24h"
 	-until optional, end time for the search; defaults to "now"
 	-order optional, direction of results returned, either "asc" or "desc"; defaults to "desc"
 	-size optional, events returned on each page; defaults to 50; maximum size is 1000
 	-pages optional, number of pages to return; defaults to unlimited
+
+Get-LogglyEventCount: returns count of events meeting criteria
+	-query mandatory, defaults to all events
+	-from optional, start time for the search; defaults to "-24h"
+	-until optional, end time for the search; defaults to "now"
+
+Get-LogglyEventMetrics: returns event metrics
+	-from mandatory, start time for the search
+	-until mandatory, end time for the search
+	-groupBy optional, dimensions to group by, defaults to empty list; accepted values: "host", "app", "log_type", "tag"
+	-host optional, results will only contain data from these hosts
+	-app optional, results will only contain data from these applications
+	-types optional, desired measurement types, defaults to all accepted values; accepted values: "volume_bytes", "count"
+

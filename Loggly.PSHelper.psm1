@@ -83,7 +83,10 @@ function Get-LogglyEventPage {
     https://<subdomain>.loggly.com/apiv2/events/iterate?next=eea25ee6-0e48-4428-a544-36d6441d132c
     #>
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    $uri = 'https://' + $logglyConfig.tenant + '/apiv2/events/iterate?q=' + $query
+    $uri = 'https://' + $logglyConfig.tenant + '/apiv2/events/iterate'
+    if ($query) {
+        $uri = $uri + '?q=' + $query
+    }
     if ($from) {
         $uri = $uri + '&from=' + $from
     }
@@ -111,6 +114,82 @@ function Get-LogglyEventPage {
             Set-LogglyRESTErrorResponse
         }
     } 
+}
+
+function Get-LogglyEventCount {
+    param(
+        [Parameter(Mandatory=$true)][string]$query,
+        [Parameter(Mandatory=$false)][string]$from,
+        [Parameter(Mandatory=$false)][string]$until
+    )
+    <#
+    $ curl -H 'Authorization: bearer <token>' -XGET 'https://<subdomain>.loggly.com/apiv2/events/count?q=*&from=-10m&until=now'
+    #>
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    $uri = 'https://' + $logglyConfig.tenant + '/apiv2/events/count'
+    if ($query) {
+        $uri = $uri + '?q=' + $query
+    }
+    if ($from) {
+        $uri = $uri + '&from=' + $from
+    }
+    if ($until) {
+        $uri = $uri + '&until=' + $until
+    }
+    $uri = [uri]::EscapeUriString($uri)
+    try {
+        $webresponse = invoke-webrequest -uri $uri -method Get -headers @{"Authorization" = "bearer $($logglyConfig.token)"}
+        $response = ConvertFrom-JSON $webresponse.Content
+        $response
+    } catch {
+        Set-LogglyRESTErrorResponse
+    }
+}
+
+function Get-LogglyEventMetric {
+    param(
+        [Parameter(Mandatory=$true)][string]$from,
+        [Parameter(Mandatory=$true)][string]$until,
+        [Parameter(Mandatory=$false)][string]$groupBy,
+        [Parameter(Mandatory=$false)][string]$host,
+        [Parameter(Mandatory=$false)][string]$app,
+        [Parameter(Mandatory=$false)][string]$types
+    )
+    <#
+    $ curl -H 'Authorization: bearer <token>' -XGET 'https://<subdomain>.loggly.com/apiv2/volume-metrics?measurement_types=count&from=2018-12-20T21%3A24%3A18.007Zh&until=2018-12-21T21%3A24%3A18.007Z&host=customer_host'
+    #>
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    $uri = 'https://' + $logglyConfig.tenant + '/apiv2/volume-metrics'
+    if ($from) {
+        $uri = $uri + '?from=' + $from
+    }
+    if ($until) {
+        $uri = $uri + '&until=' + $until
+    }
+    if ($groupBy) {
+            $uri = $uri + '&group_by=' + $groupBy
+    }
+    if ($host) {
+            $uri = $uri + '&host=' + $host
+    }
+    if ($app) {
+            $uri = $uri + '&app=' + $app
+    }
+    if ($types) {
+        if ($uri.IndexOf("?") -gt 0) {
+            $uri = $uri + '&measurement_types=' + $types
+        } else {
+            $uri = $uri + '?measurement_types=' + $types
+        }
+    }
+    $uri = [uri]::EscapeUriString($uri)
+    try {
+        $webresponse = invoke-webrequest -uri $uri -method Get -headers @{"Authorization" = "bearer $($logglyConfig.token)"}
+        $response = ConvertFrom-JSON $webresponse.Content
+        $response
+    } catch {
+        Set-LogglyRESTErrorResponse
+    }
 }
 
 function Find-LogglyEvent {
