@@ -1,0 +1,19 @@
+Connect-Loggly: saves Loggly API credentials in registry, prompts for token
+	-tenant mandatory, Loggly tenant name to connect to
+
+Disconnect-Loggly: clears cached API credentials from registry
+
+Find-LoggyEvent: creates a new event retrieval request and returns the RSID
+	-query mandatory, event query expression
+	-from optional, start time for the search; defaults to "-24h"
+	-until optional, end time for the search; defaults to "now"
+	-order optional, direction of results returned, either "asc" or "desc"; defaults to "desc"
+	-size optional, number of events to retrieve, defaults to 50
+
+Get-LogglyEvent: retreives evenets either by RSID or query
+	-rsid mandatory if retreiving by rsid
+	-query mandatory if retreiving by query, event query expression
+	-from optional, start time for the search; defaults to "-24h"
+	-until optional, end time for the search; defaults to "now"
+	-order optional, direction of results returned, either "asc" or "desc"; defaults to "desc"
+	-size optional, number of events to retrieve, defaults to 50

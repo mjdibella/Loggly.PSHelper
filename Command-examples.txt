@@ -1,0 +1,8 @@
+Get the 10 most recent events from the last hour where facility was "security/authorization messages"
+get-logglyevent -query 'facility:"security/authorization messages"' -from -1h -size 100 | ft timestamp,{$_.event.syslog.host},logmsg -autosize
+
+Get RSID for search request all events for last minute
+(Find-LogglyEvent -query * -from -1m).id
+
+Get events for RSID with id=1642118362803902260
+Get-LogglyEvent -rsid 1642118362803902260
