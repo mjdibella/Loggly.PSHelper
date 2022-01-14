@@ -69,6 +69,45 @@ function Get-LogglyEvent {
     }
 }
 
+function Get-LogglyEventPage {
+    param(
+        [Parameter(Mandatory=$true)][string]$query,
+        [Parameter(Mandatory=$false)][string]$from,
+        [Parameter(Mandatory=$false)][string]$until,
+        [Parameter(Mandatory=$false)][string]$order,
+        [Parameter(Mandatory=$false)][string]$size
+    )
+    <#
+    $ curl -H 'Authorization: bearer <token>' -XGET 'https://<subdomain>.loggly.com/apiv2/events/iterate?q=*&from=-10m&until=now&size=2' 
+    https://<subdomain>.loggly.com/apiv2/events/iterate?next=eea25ee6-0e48-4428-a544-36d6441d132c
+    #>
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    $uri = 'https://' + $logglyConfig.tenant + '/apiv2/events/iterate?q=' + $query
+    if ($from) {
+        $uri = $uri + '&from=' + $from
+    }
+    if ($until) {
+        $uri = $uri + '&until=' + $until
+    }
+    if ($order) {
+        $uri = $uri + '&order=' + $order
+    }
+    if ($size) {
+        $uri = $uri +'&size=' + $size
+    }
+    $uri = [uri]::EscapeUriString($uri)
+    while ($uri) {
+        try {
+            $webresponse = invoke-webrequest -uri $uri -method Get -headers @{"Authorization" = "bearer $($logglyConfig.token)"}
+            $response = ConvertFrom-JSON $webresponse.Content
+            $response.events
+            $uri = $response.next
+        } catch {
+            Set-LogglyRESTErrorResponse
+        }
+    } 
+}
+
 function Find-LogglyEvent {
     param(
         [Parameter(Mandatory=$true)][string]$query,
