@@ -39,3 +39,7 @@ Get-LogglyEventMetrics: returns event metrics
 	-app optional, results will only contain data from these applications
 	-types optional, desired measurement types, defaults to all accepted values; accepted values: "volume_bytes", "count"
 
+Format-LogglyTimestamp: format Loggly timestamp values in properties within objects on the pipeline to readable format
+	-properties mandatory, array of one or more property names to format
+	-format optional, format string to apply
+	-offset optional, timezone shift to apply in hours

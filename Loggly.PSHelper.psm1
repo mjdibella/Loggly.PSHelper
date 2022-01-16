@@ -240,6 +240,36 @@ function Set-LogglyRESTErrorResponse {
     break
 }
 
+function Format-LogglyTimeStamp {
+    [cmdletbinding()]
+    param(
+        [Parameter(ValueFromPipeline)][PSObject[]]$sourceObjects,
+        [Parameter(Mandatory=$true)][string[]]$properties,
+        [Parameter(Mandatory=$false)][string]$format,
+        [Parameter(Mandatory=$false)][int]$offset
+    )
+    begin {
+    }
+    process {
+        foreach ($sourceObject in $sourceObjects) {
+            foreach ($property in $properties) {
+                $timestamp = $sourceObject.$property / 1000
+                if ($offset) {
+                    $timestamp = +$timestamp + (+$offset * 3600)
+                }
+                $dateTime = (Get-Date '1970-01-01 00:00:00').AddSeconds($timeStamp)
+                if ($format) {
+                    $dateTime = $dateTime.ToString($format)
+                }
+                $sourceObject.$property = $dateTime
+                $sourceObject
+            }
+        }
+    }
+    end {
+    }
+}
+
 # get values for API access
 $logglyConfig = [ordered]@{
     registryUrl = "HKCU:\Software\Loggly\Loggly.PSHelper"

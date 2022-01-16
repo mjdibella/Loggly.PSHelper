@@ -9,3 +9,6 @@ Get-LogglyEvent -rsid 1642118362803902260
 
 Get all evenets from last 6 hours in pages of 25 events
 Get-LogglyEventPage -query * -from -6h -size 25 | ft timestamp,@{label="host";expression={$_.event.syslog.host}},logmsg -autosize
+
+Get event in ascending order, format timestamp
+Get-LogglyEventPage -query * -from -1h -order asc | Format-LogglyTimeStamp -properties timestamp -offset -8 | ft timestamp, @{label='host';expression={$_.event.syslog.host}},logmsg -autosize
