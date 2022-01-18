@@ -1,5 +1,7 @@
 Connect-Loggly: saves Loggly API credentials in registry, prompts for token
-	-tenant mandatory, Loggly tenant name to connect to
+	-tenant mandatory, Loggly tenant name to connect to (just the subdomain without .loggly.com)
+    -apitoken mandatory, Loggly API access token for log data retrieval
+    -logToken mandatory, Loggly Customer token for log event creation
 
 Disconnect-Loggly: clears cached API credentials from registry
 
@@ -43,3 +45,6 @@ Format-LogglyTimestamp: format Loggly timestamp values in properties within obje
 	-properties mandatory, array of one or more property names to format
 	-format optional, format string to apply
 	-offset optional, timezone shift to apply in hours
+
+Send-LogglyEvent: send event data to Loggly, either from objects on the pipeline or from parameter
+    -message mandatory when not using data on the pipeline, the message text for simple logging
